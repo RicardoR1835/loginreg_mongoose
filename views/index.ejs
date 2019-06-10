@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #110e16;
+            color: aliceblue;
+        }
+
+        .registration {
+            width: 45%;
+        }
+
+        .login {
+            width: 45%;
+            padding-left: 20px;
+        }
+
+        .sp {
+            color: red;
+        }
+
+        p {
+            color: aliceblue;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="container text-center">
+            <br>
+            <h1>Welcome!</h1>
+            <br>
+            <br>
+            <% JSON.stringify(messages) %>
+            <% if(messages.registration) { %>
+            <% for (var x of messages.registration) { %>
+            <p class="sp"><%= x %></p>
+            <% } %>
+            <% } %>
+        </div>
+        <div class="container d-flex justify-content-around">
+            <div class="registration d-inline-block">
+                <form action="/create" method="POST">
+                    <h2>Registration</h2>
+                    <br>
+                    <input class="form-control" type="text" placeholder="First Name" name="fn">
+                    <br>
+                    <input class="form-control" type="text" placeholder="Last Name" name="ln">
+                    <br>
+                    <input class="form-control" type="text" placeholder="Email" name="email">
+                    <br>
+                    <p>Birthday:</p>
+                    <input class="form-control" type="date" placeholder="Birthday" name="birthday">
+                    <br>
+                    <input class="form-control" type="password" placeholder="Password" name="password">
+                    <br>
+                    <input class="form-control" type="password" placeholder="Confirm Password" name="password_confirm">
+                    <br>
+                    <input type="submit" class="btn btn-primary">
+                </form>
+            </div>
+            <div class="login">
+                <form action="/login" method="POST">
+                    <h3>Login</h3>
+                    <br>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" name="email" aria-describedby="emailHelp"
+                            placeholder="Enter email">
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                            else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Password">
+                        <br>
+                        <input type="submit" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
