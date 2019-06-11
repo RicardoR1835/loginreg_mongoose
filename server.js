@@ -71,41 +71,49 @@ app.get('/', function (req, res) {
 })
 
 app.post('/create', function (req, res) {
-    console.log("POST DATA", req.body);
-    var user = new User();
-    user.fname = req.body.fn;
-    user.lname = req.body.ln;
-    user.email = req.body.email;
-    user.birthday = req.body.birthday;
-    console.log(req.body.password.length)
-    if (req.body.password.length < 6){
-        req.flash('registration', "Password must be at least 7 characters long.");
-    }
-    if (req.body.password === req.body.password_confirm) {
-        bcrypt.hash(req.body.password, 10)
-            .then(hashed_password => {
-                user.password = hashed_password;
-                user.save(function (err) {
-                    if (err) {
-                        for (var key in err.errors) {
-                            req.flash('registration', err.errors[key].message);
-                        }
-                        // redirect the user to an appropriate route
-                        console.log("something not working");
-                        res.redirect('/')
-                    } else {
-                        req.session.email = user.email;
-                        console.log(req.session.email);
-                        console.log("successfully added!")
-                        res.redirect('/show')
-                    }
-                })
+    User.countDocuments({email: req.body.email}, function(err,user){
+        if(user > 0){
+            req.flash('registration', "Email is already registered");
+            res.redirect('/')
+        } else {
+            user.email = req.body.email;
+            console.log("POST DATA", req.body);
+            var user = new User();
+            user.fname = req.body.fn;
+            user.lname = req.body.ln;
+            user.birthday = req.body.birthday;
+            console.log(req.body.password.length)
+            if (req.body.password.length < 6){
+                req.flash('registration', "Password must be at least 7 characters long.");
+            }
+            if (req.body.password === req.body.password_confirm) {
+                bcrypt.hash(req.body.password, 10)
+                    .then(hashed_password => {
+                        user.password = hashed_password;
+                        user.save(function (err) {
+                            if (err) {
+                                for (var key in err.errors) {
+                                    req.flash('registration', err.errors[key].message);
+                                }
+                                // redirect the user to an appropriate route
+                                console.log("something not working");
+                                res.redirect('/')
+                            } else {
+                                req.session.email = user.email;
+                                console.log(req.session.email);
+                                console.log("successfully added!")
+                                res.redirect('/show')
+                            }
+                        })
+        
+                    })
+            } else {
+                req.flash('registration', "Passwords do not match!");
+                res.redirect('/')
+            }
+        }
+    })
 
-            })
-    } else {
-        req.flash('registration', "Passwords do not match!");
-        res.redirect('/')
-    }
 })
 
 
@@ -128,7 +136,7 @@ app.post('/login', function(req,res){
     if (req.body.password.length < 1){
         req.flash('registration', "Invalid credentials");
         res.redirect('/')
-    }
+    } else {
     console.log("POST DATA", req.body);
     User.countDocuments({email: req.body.email}, function(err,user){
         if(user === 0){
@@ -150,29 +158,14 @@ app.post('/login', function(req,res){
             })
         }
     })
+}
 })
-
+app.get('/logout', function(req,res){
+    req.session.destroy();
+    res.redirect('/');
+})
 
 app.listen(8000, function () {
     console.log("listening on port 8000");
 })
 
-// app.post('/login', function(req,res){
-//     console.log("POST DATA", req.body);
-//     User.findOne({email: req.body.email}, function(err,user){
-//         if(err){
-//             for (var key in err.errors) {
-//                 req.flash('login', "user does not exist");
-//             }
-//             res.redirect('/')
-//         } else {
-//             bcrypt.compare(req.body.password, user.password)
-//             .then(result => {
-//                 if(result == true){
-//                     req.session.email = user.email;
-//                     res.redirect('/show')
-//                 }
-//             })
-//         }
-//     })
-// })
